@@ -3,6 +3,12 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-08-30
+
+### Changed
+- Added `.gitattributes` with `export-ignore` rules so the Composer dist
+  tarball no longer ships tests, CI config, and other development-only files.
+
 ## [1.0.0] - 2026-08-30
 
 First release of this maintained fork of the abandoned
