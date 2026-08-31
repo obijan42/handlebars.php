@@ -55,16 +55,17 @@ jobs:
       - name: Validate composer.json
         run: composer validate --no-check-publish
 
-      - name: Install (no dev deps)
-        run: composer install --no-dev --prefer-dist --no-interaction --no-progress
-
       - name: Lint all source files
         run: find src -name '*.php' -print0 | xargs -0 -n1 php -l
 
+      # The library has no runtime dependencies and ships its own autoloader,
+      # so no `composer install` is needed (and PHPUnit could not resolve on
+      # these PHP versions anyway).
       - name: Smoke test rendering
         run: |
           php -r '
-            require "vendor/autoload.php";
+            require "src/Handlebars/Autoloader.php";
+            \Handlebars\Autoloader::register();
             $e = new \Handlebars\Handlebars();
             $out = $e->render("Hi {{n}} {{#each x}}[{{this}}]{{/each}} {{#if y}}yes{{/if}}", ["n" => "there", "x" => [1, 2], "y" => true]);
             $expected = "Hi there [1][2] yes";
