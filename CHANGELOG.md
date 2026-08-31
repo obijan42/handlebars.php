@@ -3,6 +3,14 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.2] - 2026-08-30
+
+### Changed
+- Declared `replace: { "xamin/handlebars.php": "*" }` so this fork transparently
+  satisfies any dependency on the abandoned `xamin/handlebars.php`, preventing
+  both packages (which share the `Handlebars\` namespace) from being installed
+  side-by-side.
+
 ## [1.0.1] - 2026-08-30
 
 ### Changed
