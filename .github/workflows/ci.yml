@@ -6,13 +6,16 @@ on:
   pull_request:
 
 jobs:
+  # The test suite uses PHPUnit 10/11 (attribute metadata + the <source>
+  # config schema), which requires PHP 8.1+. The library itself supports
+  # PHP 7.2+ — that is verified by the separate "lint" job below.
   tests:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
-    name: PHP ${{ matrix.php }}
+        php: ['8.1', '8.2', '8.3', '8.4']
+    name: Tests PHP ${{ matrix.php }}
     steps:
       - uses: actions/checkout@v4
 
@@ -30,3 +33,44 @@ jobs:
 
       - name: Run test suite
         run: vendor/bin/phpunit
+
+  # Verify the library loads and renders on the full supported range,
+  # including the PHP versions the (dev-only) test tooling cannot run on.
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.2', '7.4', '8.0']
+    name: Lint PHP ${{ matrix.php }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --no-check-publish
+
+      - name: Install (no dev deps)
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress
+
+      - name: Lint all source files
+        run: find src -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Smoke test rendering
+        run: |
+          php -r '
+            require "vendor/autoload.php";
+            $e = new \Handlebars\Handlebars();
+            $out = $e->render("Hi {{n}} {{#each x}}[{{this}}]{{/each}} {{#if y}}yes{{/if}}", ["n" => "there", "x" => [1, 2], "y" => true]);
+            $expected = "Hi there [1][2] yes";
+            if ($out !== $expected) {
+                fwrite(STDERR, "MISMATCH: got [$out], expected [$expected]\n");
+                exit(1);
+            }
+            echo "OK: $out\n";
+          '
