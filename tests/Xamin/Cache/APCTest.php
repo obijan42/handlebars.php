@@ -30,17 +30,17 @@
  * @version    Release: @package_version@
  * @link       http://xamin.ir
  */
-class APCTest extends \PHPUnit_Framework_TestCase
+class APCTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * {@inheritdoc}
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
-        if ( ! extension_loaded('apc') || false === @apc_cache_info()) {
-            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of APC');
+        if (!extension_loaded('apcu') || !ini_get('apc.enable_cli') || !function_exists('apcu_enabled') || !apcu_enabled()) {
+            $this->markTestSkipped('The ' . __CLASS__ . ' requires the APCu extension enabled for CLI');
         }
     }
 

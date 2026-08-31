@@ -3,7 +3,7 @@
  * This file is part of Handlebars-php
  * Base on mustache-php https://github.com/bobthecow/mustache.php
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -57,7 +57,7 @@ interface Cache
      *
      * @return void
      */
-    public function set($name, $value, $ttl = 0);
+    public function set($name, $value, $ttl = 0): void;
 
     /**
      * Remove cache
@@ -66,6 +66,6 @@ interface Cache
      *
      * @return void
      */
-    public function remove($name);
+    public function remove($name): void;
 
 }

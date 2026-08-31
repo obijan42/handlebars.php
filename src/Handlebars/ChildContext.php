@@ -3,7 +3,7 @@
  * This file is part of Handlebars-php
  * Base on mustache-php https://github.com/bobthecow/mustache.php
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -51,7 +51,7 @@ class ChildContext extends Context
      *
      * @return void
      */
-    public function setParent(Context $parent) 
+    public function setParent(Context $parent): void
     {
         $this->parentContext = $parent;
     }

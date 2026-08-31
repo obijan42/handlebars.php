@@ -3,7 +3,7 @@
  * This file is part of Handlebars-php
  * Base on mustache-php https://github.com/bobthecow/mustache.php
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -103,7 +103,10 @@ class Disk implements Cache
                 unlink($path);
             } else {
                 $serialized_data = fread($file, filesize($path));
-                $output = unserialize($serialized_data);
+                // The cached value is always a plain-array parse tree, so no
+                // classes are expected. Forbidding object instantiation closes
+                // the object-injection sink on a shared/writable cache dir.
+                $output = unserialize($serialized_data, array('allowed_classes' => false));
             }
             fclose($file);
         }
@@ -121,7 +124,7 @@ class Disk implements Cache
      *
      * @return void
      */
-    public function set($name, $value, $ttl = 0)
+    public function set($name, $value, $ttl = 0): void
     {
         $path = $this->_getPath($name);
 
@@ -135,7 +138,7 @@ class Disk implements Cache
      *
      * @return void
      */
-    public function remove($name)
+    public function remove($name): void
     {
         $path = $this->_getPath($name);
 

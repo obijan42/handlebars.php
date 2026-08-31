@@ -3,7 +3,7 @@
  * This file is part of Handlebars-php
  * Base on mustache-php https://github.com/bobthecow/mustache.php
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -59,20 +59,6 @@ class Context
     protected $stack = array();
 
     /**
-     * Section stack index
-     *
-     * @var array index stack for sections
-     */
-    protected $index = array();
-
-    /**
-     * Object stack keys
-     *
-     * @var array key stack for objects
-     */
-    protected $key = array();
-
-    /**
      * Special variables stack for sections.
      *
      * @var array Each stack element can
@@ -99,7 +85,7 @@ class Context
      *
      * @return void
      */
-    public function push($value)
+    public function push($value): void
     {
         array_push($this->stack, $value);
     }
@@ -113,7 +99,7 @@ class Context
      *
      * @see \Handlebars\Context::$specialVariables
      */
-    public function pushSpecialVariables($variables)
+    public function pushSpecialVariables($variables): void
     {
         array_push($this->specialVariables, $variables);
     }
@@ -195,7 +181,7 @@ class Context
         if ($variableName instanceof \Handlebars\StringWrapper) {
             return (string)$variableName;
         }
-        $variableName = trim($variableName);
+        $variableName = trim((string)$variableName);
         $level = 0;
         while (substr($variableName, 0, 3) == '../') {
             $variableName = trim(substr($variableName, 3));
@@ -255,7 +241,7 @@ class Context
             do {
                 $current = current($this->stack);
                 foreach ($chunks as $chunk) {
-                    if (is_string($current) and $current == '') {
+                    if (is_string($current) && $current == '') {
                         return $current;
                     }
                     $current = $this->_findVariableInContext($current, $chunk, $strict);
@@ -316,7 +302,7 @@ class Context
      * @throws \InvalidArgumentException if variable name is invalid.
      * @return array
      */
-    private function _splitVariableName($variableName)
+    private function _splitVariableName($variableName): array
     {
         $bad_chars = preg_quote(self::NOT_VALID_NAME_CHARS, '/');
         $bad_seg_chars = preg_quote(self::NOT_VALID_SEGMENT_NAME_CHARS, '/');

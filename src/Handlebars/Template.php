@@ -3,7 +3,7 @@
  * This file is part of Handlebars-php
  * Base on mustache-php https://github.com/bobthecow/mustache.php
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -119,7 +119,7 @@ class Template
      *
      * @return void
      */
-    public function setStopToken($token)
+    public function setStopToken($token): void
     {
         $topStack = array_pop($this->stack);
         $topStack[2] = $token;
@@ -312,7 +312,7 @@ class Template
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         $topStack = array_pop($this->stack);
         $topStack[0] = 0;
@@ -450,7 +450,11 @@ class Template
         $buffer = '';
         if ($this->_checkIterable($sectionVar)) {
             $index = 0;
-            $lastIndex = (count($sectionVar) - 1);
+            // Only countable values expose a reliable last index; a plain
+            // Traversable (Iterator/Generator) would make count() throw a
+            // TypeError on PHP 8, so @last is simply never true for those.
+            $countable = is_array($sectionVar) || $sectionVar instanceof \Countable;
+            $lastIndex = $countable ? (count($sectionVar) - 1) : null;
             foreach ($sectionVar as $key => $d) {
                 $context->pushSpecialVariables(
                     array(
@@ -552,7 +556,7 @@ class Template
      *
      * @return array
      */
-    private function _preparePartialArguments(Context $context, Arguments $arguments)
+    private function _preparePartialArguments(Context $context, Arguments $arguments): array
     {
         $positionalArgs = array();
         foreach ($arguments->getPositionalArguments() as $positionalArg) {
@@ -582,7 +586,7 @@ class Template
      *
      * @return boolean
      */
-    private function _isSection($current)
+    private function _isSection($current): bool
     {
         $helpers = $this->getEngine()->getHelpers();
         // Tokenizer doesn't process the args -if any- so be aware of that
@@ -631,7 +635,7 @@ class Template
 
         if ($escaped && !($result instanceof SafeString)) {
             $escape_args = $this->handlebars->getEscapeArgs();
-            array_unshift($escape_args, $result);
+            array_unshift($escape_args, (string)$result);
             $result = call_user_func_array(
                 $this->handlebars->getEscape(),
                 array_values($escape_args)
@@ -717,7 +721,7 @@ class Template
      *
      * @see https://github.com/bobthecow/mustache.php/blob/18a2adc/src/Mustache/Template.php#L85-L113
      */
-    private function _checkIterable($value)
+    private function _checkIterable($value): bool
     {
         switch (gettype($value)) {
         case 'object':

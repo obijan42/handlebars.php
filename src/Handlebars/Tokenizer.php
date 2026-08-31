@@ -5,7 +5,7 @@
  * file that was distributed with this source code.
  * Changes to match xamin-std and handlebars made by xamin team
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -120,7 +120,7 @@ class Tokenizer
      *
      * @return array Set of Mustache tokens
      */
-    public function scan($text/*, $delimiters = null*/)
+    public function scan($text/*, $delimiters = null*/): array
     {
         if ($text instanceof StringWrapper) {
             $text = $text->getString();
@@ -157,19 +157,19 @@ class Tokenizer
                 // brace.
                 $prev_slash = substr($this->buffer, -1) == '\\';
 
-                if ($this->tagChange($this->otag. self::T_TRIM, $text, $i) and (!$this->escaped || $prev_slash)) {
+                if ($this->tagChange($this->otag. self::T_TRIM, $text, $i) && (!$this->escaped || $prev_slash)) {
                     $this->flushBuffer();
                     $this->state = self::IN_TAG_TYPE;
                     $this->trimLeft = true;
-                } elseif ($this->tagChange(self::T_UNESCAPED.$this->otag, $text, $i) and $this->escaped) {
+                } elseif ($this->tagChange(self::T_UNESCAPED.$this->otag, $text, $i) && $this->escaped) {
                     $this->buffer .= "{{{";
                     $i += 2;
-                    continue;
-                } elseif ($this->tagChange($this->otag, $text, $i) and (!$this->escaped || $prev_slash)) {
+                    break;
+                } elseif ($this->tagChange($this->otag, $text, $i) && (!$this->escaped || $prev_slash)) {
                     $i--;
                     $this->flushBuffer();
                     $this->state = self::IN_TAG_TYPE;
-                } elseif ($this->escaped and $this->escaping) {
+                } elseif ($this->escaped && $this->escaping) {
                     // We should not add extra slash before opening tag because
                     // doubled slash where should be transformed to single one
                     if (($i + 1) < $len && !$this->tagChange($this->otag, $text, $i + 1)) {
@@ -187,7 +187,7 @@ class Tokenizer
             case self::IN_TAG_TYPE:
 
                 $i += strlen($this->otag) - 1;
-                if (isset(self::$_tagTypes[$text[$i + 1]])) {
+                if (isset($text[$i + 1]) && isset(self::$_tagTypes[$text[$i + 1]])) {
                     $tag = $text[$i + 1];
                     $this->tagType = $tag;
                 } else {
@@ -210,7 +210,7 @@ class Tokenizer
             default:
                 if ($this->tagChange(self::T_TRIM . $this->ctag, $text, $i)) {
                     $this->trimRight = true;
-                    continue;
+                    break;
                 }
                 if ($this->tagChange($this->ctag, $text, $i)) {
                     // Sections (Helpers) can accept parameters
@@ -268,7 +268,7 @@ class Tokenizer
                 break;
             }
 
-            $this->escaped = ($this->escaping and !$this->escaped);
+            $this->escaped = ($this->escaping && !$this->escaped);
         }
 
         $this->filterLine(true);
@@ -281,7 +281,7 @@ class Tokenizer
      *
      * @return void
      */
-    protected function reset()
+    protected function reset(): void
     {
         $this->state = self::IN_TEXT;
         $this->escaped = false;
@@ -303,7 +303,7 @@ class Tokenizer
      *
      * @return void
      */
-    protected function flushBuffer()
+    protected function flushBuffer(): void
     {
         if ($this->buffer !== '') {
             $this->tokens[] = array(
@@ -319,7 +319,7 @@ class Tokenizer
      *
      * @return boolean True if the current line is all whitespace
      */
-    protected function lineIsWhitespace()
+    protected function lineIsWhitespace(): bool
     {
         $tokensCount = count($this->tokens);
         for ($j = $this->lineStart; $j < $tokensCount; $j++) {
@@ -345,7 +345,7 @@ class Tokenizer
      *
      * @return void
      */
-    protected function filterLine($noNewLine = false)
+    protected function filterLine($noNewLine = false): void
     {
         $this->flushBuffer();
         if ($this->seenTag && $this->lineIsWhitespace()) {
@@ -378,15 +378,19 @@ class Tokenizer
      *
      * @return int New index value
      */
-    protected function changeDelimiters($text, $index)
+    protected function changeDelimiters($text, $index): int
     {
         $startIndex = strpos($text, '=', $index) + 1;
         $close = '=' . $this->ctag;
         $closeIndex = strpos($text, $close, $index);
 
-        list($otag, $ctag) = explode(
-            ' ',
-            trim(substr($text, $startIndex, $closeIndex - $startIndex))
+        list($otag, $ctag) = array_pad(
+            explode(
+                ' ',
+                trim(substr($text, $startIndex, $closeIndex - $startIndex))
+            ),
+            2,
+            ''
         );
         $this->otag = $otag;
         $this->ctag = $ctag;
@@ -403,7 +407,7 @@ class Tokenizer
      *
      * @return boolean True if this is a closing section tag
      */
-    protected function tagChange($tag, $text, $index)
+    protected function tagChange($tag, $text, $index): bool
     {
         return substr($text, $index, strlen($tag)) === $tag;
     }

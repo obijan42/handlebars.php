@@ -3,7 +3,7 @@
  * This file is part of Handlebars-php
  * Base on mustache-php https://github.com/bobthecow/mustache.php
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -61,7 +61,7 @@ class APC implements Cache
     public function get($name)
     {
         $success = null;
-        $result = apc_fetch($this->_getKey($name), $success);
+        $result = apcu_fetch($this->_getKey($name), $success);
 
         return $success ? $result : false;
 
@@ -78,9 +78,9 @@ class APC implements Cache
      *
      * @return void
      */
-    public function set($name, $value, $ttl = 0)
+    public function set($name, $value, $ttl = 0): void
     {
-        apc_store($this->_getKey($name), $value, $ttl);
+        apcu_store($this->_getKey($name), $value, $ttl);
     }
 
     /**
@@ -90,9 +90,9 @@ class APC implements Cache
      *
      * @return void
      */
-    public function remove($name)
+    public function remove($name): void
     {
-        apc_delete($this->_getKey($name));
+        apcu_delete($this->_getKey($name));
     }
 
     /**

@@ -5,7 +5,7 @@
  * file that was distributed with this source code.
  * Changes to match xamin-std and handlebars made by xamin team
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -77,7 +77,7 @@ class Autoloader
      *
      * @return void
      */
-    public function autoload($class)
+    public function autoload($class): void
     {
         if ($class[0] !== '\\') {
             $class = '\\' . $class;

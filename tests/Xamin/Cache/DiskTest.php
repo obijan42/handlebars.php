@@ -26,14 +26,14 @@
  * @link       http://xamin.ir
  */
 
-class DiskTest extends \PHPUnit_Framework_TestCase
+class DiskTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * {@inheritdoc}
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         \Handlebars\Autoloader::register();
     }

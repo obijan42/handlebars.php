@@ -2,7 +2,7 @@
 /**
  * This file is part of Handlebars-php
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -29,7 +29,7 @@ namespace Handlebars;
  * @link      http://xamin.ir
  */
 
-class BaseString
+class BaseString implements \Stringable
 {
     private $_string;
 
@@ -48,7 +48,7 @@ class BaseString
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getString();
     }
@@ -70,7 +70,7 @@ class BaseString
      *
      * @return void
      */
-    public function setString($string)
+    public function setString($string): void
     {
         $this->_string = $string;
     }

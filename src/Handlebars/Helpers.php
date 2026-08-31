@@ -3,7 +3,7 @@
  * This file is part of Handlebars-php
  * Base on mustache-php https://github.com/bobthecow/mustache.php
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -77,7 +77,7 @@ class Helpers
      *
      * @return void
      */
-    protected function addDefaultHelpers()
+    protected function addDefaultHelpers(): void
     {
         $this->add('if', new Helper\IfHelper());
         $this->add('each', new Helper\EachHelper());
@@ -97,7 +97,7 @@ class Helpers
      * @throws \InvalidArgumentException if $helper is not a callable
      * @return void
      */
-    public function add($name, $helper)
+    public function add($name, $helper): void
     {
         if (!is_callable($helper) && ! $helper instanceof Helper) {
             throw new \InvalidArgumentException(
@@ -120,7 +120,7 @@ class Helpers
      *
      * @return void
      */
-    public function addHelpers(Helpers $helpers)
+    public function addHelpers(Helpers $helpers): void
     {
         $this->helpers = $helpers->getAll() + $this->helpers;
     }
@@ -219,7 +219,7 @@ class Helpers
      *
      * @return void
      */
-    public function __set($name, $helper)
+    public function __set($name, $helper): void
     {
         $this->add($name, $helper);
     }
@@ -231,7 +231,7 @@ class Helpers
      *
      * @return void
      */
-    public function __unset($name)
+    public function __unset($name): void
     {
         $this->remove($name);
     }
@@ -244,7 +244,7 @@ class Helpers
      * @throws \InvalidArgumentException if the requested helper is not present.
      * @return void
      */
-    public function remove($name)
+    public function remove($name): void
     {
         if (!$this->has($name)) {
             throw new \InvalidArgumentException(
@@ -265,7 +265,7 @@ class Helpers
      *
      * @return void
      */
-    public function clear()
+    public function clear(): void
     {
         $this->helpers = array();
     }

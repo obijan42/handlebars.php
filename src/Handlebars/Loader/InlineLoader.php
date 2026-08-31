@@ -119,7 +119,7 @@ class InlineLoader implements Loader
      *
      * @return void
      */
-    protected function loadTemplates()
+    protected function loadTemplates(): void
     {
         if (!is_null($this->templates)) {
             return;
@@ -129,7 +129,7 @@ class InlineLoader implements Loader
         $data = file_get_contents($this->fileName, false, null, $this->offset);
         foreach (preg_split('/^@@(?= [\w\d\.]+$)/m', $data, -1) as $chunk) {
             if (trim($chunk)) {
-                list($name, $content) = explode("\n", $chunk, 2);
+                list($name, $content) = array_pad(explode("\n", $chunk, 2), 2, '');
                 $this->templates[trim($name)] = trim($content);
             }
         }

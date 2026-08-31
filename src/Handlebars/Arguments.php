@@ -2,7 +2,7 @@
 /**
  * This file is part of Handlebars-php
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -26,7 +26,7 @@ namespace Handlebars;
  * @version   Release: @package_version@
  * @link      http://xamin.ir
  */
-class Arguments
+class Arguments implements \Stringable
 {
     /**
      * List of named arguments.
@@ -70,7 +70,7 @@ class Arguments
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->originalString;
     }
@@ -104,7 +104,7 @@ class Arguments
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function parse($args_string)
+    protected function parse($args_string): void
     {
         $bad_chars = preg_quote(Context::NOT_VALID_NAME_CHARS, '#');
         $bad_seg_chars = preg_quote(Context::NOT_VALID_SEGMENT_NAME_CHARS, '#');

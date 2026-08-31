@@ -4,7 +4,7 @@
  * This file is part of Handlebars-php
  * Base on mustache-php https://github.com/bobthecow/mustache.php
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -94,7 +94,7 @@ class FilesystemLoader implements Loader
      *
      * @return void
      */
-    protected function setBaseDir($baseDirs)
+    protected function setBaseDir($baseDirs): void
     {
         if (is_string($baseDirs)) {
             $baseDirs = array($this->sanitizeDirectory($baseDirs));
@@ -135,7 +135,7 @@ class FilesystemLoader implements Loader
      *
      * @return void
      */
-    protected function handleOptions(array $options = array())
+    protected function handleOptions(array $options = array()): void
     {
         if (isset($options['extension'])) {
             $this->_extension = '.' . ltrim($options['extension'], '.');
@@ -191,7 +191,14 @@ class FilesystemLoader implements Loader
                 $fileName .= $this->_extension;
             }
             if (file_exists($fileName)) {
-                return $fileName;
+                // Ensure the resolved path stays inside the base directory so a
+                // template name containing "../" segments cannot escape it.
+                $realFile = realpath($fileName);
+                if ($realFile !== false
+                    && strpos($realFile, $baseDir . '/') === 0
+                ) {
+                    return $fileName;
+                }
             }
         }
 

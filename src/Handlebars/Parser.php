@@ -4,7 +4,7 @@
  * Base on mustache-php https://github.com/bobthecow/mustache.php
  * re-write to use with handlebars
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -45,7 +45,7 @@ class Parser
      *
      * @return array Token parse tree
      */
-    public function parse(array $tokens = array())
+    public function parse(array $tokens = array()): array
     {
         return $this->_buildTree(new \ArrayIterator($tokens));
     }
@@ -62,7 +62,7 @@ class Parser
      * are encountered.
      * @return array Token parse tree
      */
-    private function _buildTree(\ArrayIterator $tokens)
+    private function _buildTree(\ArrayIterator $tokens): array
     {
         $stack = array();
 

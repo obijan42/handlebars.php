@@ -1,19 +1,26 @@
 Handlebars.php
 ==============
-[![Build Status](https://travis-ci.org/XaminProject/handlebars.php.png?branch=master)](https://travis-ci.org/XaminProject/handlebars.php)
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/XaminProject/handlebars.php/badges/quality-score.png?s=23a379f19b523498926eb3f2b60195815632e8ef)](https://scrutinizer-ci.com/g/XaminProject/handlebars.php/)
-[![Code Coverage](https://scrutinizer-ci.com/g/XaminProject/handlebars.php/badges/coverage.png?s=9d6acd80ef2bda03cbd00a0cff35535614ce79ed)](https://scrutinizer-ci.com/g/XaminProject/handlebars.php/)
+[![CI](https://github.com/obijan42/handlebars.php/actions/workflows/ci.yml/badge.svg)](https://github.com/obijan42/handlebars.php/actions/workflows/ci.yml)
+
+A maintained fork of the abandoned [`xamin/handlebars.php`](https://github.com/XaminProject/handlebars.php),
+updated to run on PHP 7.2 through 8.x. Drop-in compatible: the namespace and public API are unchanged.
+
+> Migrating from `xamin/handlebars.php`? The only breaking change is the removal of the
+> long-deprecated `\Handlebars\String` class — use `\Handlebars\StringWrapper` instead.
+> Note that default escaping now uses `ENT_QUOTES` (single quotes are escaped too);
+> see [CHANGELOG.md](CHANGELOG.md) and [SECURITY.md](SECURITY.md).
+
+> **Alternatives:** [`salesforce/handlebars-php`](https://github.com/salesforce/handlebars-php)
+> is another fork (from the `mardix` lineage, PHP 5.4+, last active 2023) with `@data`
+> variables and `#each` slice syntax. This fork descends from XaminProject's `develop`
+> branch and aims to be a closer drop-in replacement for `xamin/handlebars.php`.
+
 installation
 ------------
 
-add the following to require property of your composer.json file:
-
-`"xamin/handlebars.php": "dev-master"` for php 5.3+
-`"xamin/handlebars.php": "dev-php-52"` for php 5.2
-
-then run:
-
-`$ composer install`
+```
+$ composer require obijan42/handlebars.php
+```
 
 usage
 -----

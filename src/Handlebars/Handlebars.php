@@ -3,7 +3,7 @@
  * This file is part of Handlebars-php
  * Based on mustache-php https://github.com/bobthecow/mustache.php
  *
- * PHP version 5.3
+ * PHP version 7.2
  *
  * @category  Xamin
  * @package   Handlebars
@@ -121,7 +121,7 @@ class Handlebars
      * @var array parametes to pass to escape function
      */
     private $_escapeArgs = array(
-        ENT_COMPAT,
+        ENT_QUOTES,
         'UTF-8'
     );
 
@@ -217,7 +217,7 @@ class Handlebars
      *
      * @return void
      */
-    public function setHelpers(Helpers $helpers)
+    public function setHelpers(Helpers $helpers): void
     {
         $this->_helpers = $helpers;
     }
@@ -244,7 +244,7 @@ class Handlebars
      *
      * @return void
      */
-    public function addHelper($name, $helper)
+    public function addHelper($name, $helper): void
     {
         $this->getHelpers()->add($name, $helper);
     }
@@ -281,8 +281,8 @@ class Handlebars
      *
      * @return void
      */
-    public function registerHelper($name, $helper)
-    {    
+    public function registerHelper($name, $helper): void
+    {
         $callback = function ($template, $context, $arg) use ($helper) {
             $args = $template->parseArguments($arg);
             $named = $template->parseNamedArguments($arg);
@@ -384,7 +384,7 @@ class Handlebars
      *
      * @return void
      */
-    public function removeHelper($name)
+    public function removeHelper($name): void
     {
         $this->getHelpers()->remove($name);
     }
@@ -396,7 +396,7 @@ class Handlebars
      *
      * @return void
      */
-    public function setLoader(Loader $loader)
+    public function setLoader(Loader $loader): void
     {
         $this->_loader = $loader;
     }
@@ -422,7 +422,7 @@ class Handlebars
      *
      * @return void
      */
-    public function setPartialsLoader(Loader $loader)
+    public function setPartialsLoader(Loader $loader): void
     {
         $this->_partialsLoader = $loader;
     }
@@ -448,7 +448,7 @@ class Handlebars
      *
      * @return void
      */
-    public function setCache(Cache $cache)
+    public function setCache(Cache $cache): void
     {
         $this->_cache = $cache;
     }
@@ -474,7 +474,7 @@ class Handlebars
      *
      * @return void
      */
-    public function setTtl($ttl)
+    public function setTtl($ttl): void
     {
         $this->_ttl = $ttl;
     }
@@ -507,7 +507,7 @@ class Handlebars
      * @throws \InvalidArgumentException
      * @return void
      */
-    public function setEscape($escape)
+    public function setEscape($escape): void
     {
         if (!is_callable($escape)) {
             throw new \InvalidArgumentException(
@@ -534,7 +534,7 @@ class Handlebars
      *
      * @return void
      */
-    public function setEscapeArgs($escapeArgs)
+    public function setEscapeArgs($escapeArgs): void
     {
         if (!is_array($escapeArgs)) {
             $escapeArgs = array($escapeArgs);
@@ -550,7 +550,7 @@ class Handlebars
      *
      * @return void
      */
-    public function setTokenizer(Tokenizer $tokenizer)
+    public function setTokenizer(Tokenizer $tokenizer): void
     {
         $this->_tokenizer = $tokenizer;
     }
@@ -579,7 +579,7 @@ class Handlebars
      *
      * @return void
      */
-    public function setParser(Parser $parser)
+    public function setParser(Parser $parser): void
     {
         $this->_parser = $parser;
     }
@@ -608,7 +608,7 @@ class Handlebars
      *
      * @return void
      */
-    public function setTemplateClass($class)
+    public function setTemplateClass($class): void
     {
         if (!is_a($class, 'Handlebars\\Template', true)) {
             throw new \InvalidArgumentException(
@@ -663,7 +663,7 @@ class Handlebars
      *
      * @return void
      */
-    public function registerPartial($alias, $content)
+    public function registerPartial($alias, $content): void
     {
         $this->_aliases[$alias] = $content;
     }
@@ -675,7 +675,7 @@ class Handlebars
      *
      * @return void
      */
-    public function unRegisterPartial($alias)
+    public function unRegisterPartial($alias): void
     {
         if (isset($this->_aliases[$alias])) {
             unset($this->_aliases[$alias]);
