@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.3] - 2026-08-31
+
+### Fixed
+- Removed `implements \Stringable` from `BaseString` and `Arguments`. The
+  `\Stringable` interface only exists on PHP 8.0+, so v1.0.0–v1.0.2 fatally
+  errored on PHP 7.2–7.4 despite the `>=7.2` requirement. On PHP 8 a class with
+  `__toString()` implements `Stringable` implicitly, so behavior is unchanged.
+- CI now runs the test suite on PHP 8.1–8.4 (the suite requires PHPUnit 10/11)
+  and separately lint + smoke-tests the library on PHP 7.2–8.0, so the full
+  supported range is actually exercised.
+
 ## [1.0.2] - 2026-08-30
 
 ### Changed

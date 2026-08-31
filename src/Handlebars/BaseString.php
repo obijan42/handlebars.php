@@ -29,7 +29,7 @@ namespace Handlebars;
  * @link      http://xamin.ir
  */
 
-class BaseString implements \Stringable
+class BaseString
 {
     private $_string;
 

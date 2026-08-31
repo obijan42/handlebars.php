@@ -26,7 +26,7 @@ namespace Handlebars;
  * @version   Release: @package_version@
  * @link      http://xamin.ir
  */
-class Arguments implements \Stringable
+class Arguments
 {
     /**
      * List of named arguments.
