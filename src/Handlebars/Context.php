@@ -304,22 +304,30 @@ class Context
      */
     private function _splitVariableName($variableName): array
     {
-        $bad_chars = preg_quote(self::NOT_VALID_NAME_CHARS, '/');
-        $bad_seg_chars = preg_quote(self::NOT_VALID_SEGMENT_NAME_CHARS, '/');
+        // The check/get patterns depend only on class constants, so build them
+        // once and reuse across every call. `get()` runs for every variable
+        // interpolation in every loop iteration, making this a rendering
+        // hot path.
+        static $check_pattern = null;
+        static $get_pattern = null;
+        if ($check_pattern === null) {
+            $bad_chars = preg_quote(self::NOT_VALID_NAME_CHARS, '/');
+            $bad_seg_chars = preg_quote(self::NOT_VALID_SEGMENT_NAME_CHARS, '/');
 
-        $name_pattern = "(?:[^"
-            . $bad_chars
-            . "\s]+)|(?:\[[^"
-            . $bad_seg_chars
-            . "]+\])";
+            $name_pattern = "(?:[^"
+                . $bad_chars
+                . "\s]+)|(?:\[[^"
+                . $bad_seg_chars
+                . "]+\])";
 
-        $check_pattern = "/^(("
-            . $name_pattern
-            . ")\.)*("
-            . $name_pattern
-            . ")\.?$/";
+            $check_pattern = "/^(("
+                . $name_pattern
+                . ")\.)*("
+                . $name_pattern
+                . ")\.?$/";
 
-        $get_pattern = "/(?:" . $name_pattern . ")/";
+            $get_pattern = "/(?:" . $name_pattern . ")/";
+        }
 
         if (!preg_match($check_pattern, $variableName)) {
             throw new \InvalidArgumentException(

@@ -343,37 +343,38 @@ class Template
         }
 
         // subexpression parsing loop
-        // will contain all subexpressions 
+        // will contain all subexpressions
         // inside outermost brackets
         $subexprs = array();
-        $insideOf = array( 'single' => false, 'double' => false );
-        $lvl = 0;
-        $cur_start = 0;
-        for ($i=0; $i < strlen($current[Tokenizer::ARGS]); $i++) {
-            $cur = substr($current[Tokenizer::ARGS], $i, 1);
-            if ($cur == "'" ) {
-                $insideOf['single'] = ! $insideOf['single'];
-            }
-            if ($cur == '"' ) {
-                $insideOf['double'] = ! $insideOf['double'];
-            }
-            if ($cur == '(' && ! $insideOf['single'] && ! $insideOf['double']) {
-                if ($lvl == 0) {
-                    $cur_start = $i+1;
+        $args = $current[Tokenizer::ARGS];
+        // Fast path: without an opening paren there can be no subexpressions,
+        // so skip the whole char-by-char scan (this is the common case).
+        if (strpos($args, '(') !== false) {
+            $insideOf = array( 'single' => false, 'double' => false );
+            $lvl = 0;
+            $cur_start = 0;
+            $argsLen = strlen($args);
+            for ($i = 0; $i < $argsLen; $i++) {
+                $cur = $args[$i];
+                if ($cur === "'") {
+                    $insideOf['single'] = !$insideOf['single'];
                 }
-                $lvl++;
-                continue;
-            }
-            if ($cur == ')' && ! $insideOf['single'] && ! $insideOf['double']) {
-                $lvl--;
-                if ($lvl == 0) {
-                    $subexprs[] = substr(
-                        $current[Tokenizer::ARGS], 
-                        $cur_start, 
-                        $i - $cur_start
-                    );
+                if ($cur === '"') {
+                    $insideOf['double'] = !$insideOf['double'];
                 }
-
+                if ($cur === '(' && !$insideOf['single'] && !$insideOf['double']) {
+                    if ($lvl == 0) {
+                        $cur_start = $i + 1;
+                    }
+                    $lvl++;
+                    continue;
+                }
+                if ($cur === ')' && !$insideOf['single'] && !$insideOf['double']) {
+                    $lvl--;
+                    if ($lvl == 0) {
+                        $subexprs[] = substr($args, $cur_start, $i - $cur_start);
+                    }
+                }
             }
         }
 
@@ -589,10 +590,15 @@ class Template
     private function _isSection($current): bool
     {
         $helpers = $this->getEngine()->getHelpers();
-        // Tokenizer doesn't process the args -if any- so be aware of that
-        $name = explode(' ', $current[Tokenizer::NAME], 2);
+        $name = $current[Tokenizer::NAME];
+        // Tokenizer doesn't process the args -if any- so be aware of that.
+        // The vast majority of names have no space; skip the explode
+        // allocation in that (very hot) case.
+        if (strpos($name, ' ') !== false) {
+            $name = substr($name, 0, strpos($name, ' '));
+        }
 
-        return $helpers->has(reset($name));
+        return $helpers->has($name);
     }
 
     /**

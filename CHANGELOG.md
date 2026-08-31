@@ -3,6 +3,22 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-08-31
+
+### Performance
+- Precompile the invariant regex patterns in `Context::_splitVariableName`
+  and `Arguments::parse` (they depend only on class constants). Before,
+  every variable resolution and every helper invocation rebuilt them via
+  `preg_quote` + string concatenation.
+- Fast path in `Template::_isSection` avoids the `explode()` allocation on
+  every escaped variable when the name contains no space (the common case).
+- Fast path in `Template::_handlebarsStyleSection` skips the char-by-char
+  subexpression scan when the arguments contain no `(`; the loop hoists
+  `strlen()` and indexes with `$args[$i]` instead of `substr()`.
+
+Measured on a 500-row `{{#each}}` loop with dotted lookup and an `{{#if}}`:
+~4.34 → ~3.14 ms/render on PHP 8.5 (about 27% faster). Behavior unchanged.
+
 ## [1.0.3] - 2026-08-31
 
 ### Fixed

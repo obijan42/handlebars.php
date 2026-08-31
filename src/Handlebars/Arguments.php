@@ -106,17 +106,24 @@ class Arguments
      */
     protected function parse($args_string): void
     {
-        $bad_chars = preg_quote(Context::NOT_VALID_NAME_CHARS, '#');
-        $bad_seg_chars = preg_quote(Context::NOT_VALID_SEGMENT_NAME_CHARS, '#');
+        // These patterns depend only on class constants, so build them once
+        // per process. `parse()` is called for every helper invocation, so
+        // this runs on every iteration of every loop that contains a helper.
+        static $named_argument = null;
+        static $positional_argument = null;
+        if ($named_argument === null) {
+            $bad_chars = preg_quote(Context::NOT_VALID_NAME_CHARS, '#');
+            $bad_seg_chars = preg_quote(Context::NOT_VALID_SEGMENT_NAME_CHARS, '#');
 
-        $name_chunk = '(?:[^' . $bad_chars . '\s]+)|(?:\[[^' . $bad_seg_chars . ']+\])';
-        $variable_name = '(?:\.\.\/)*(?:(?:' . $name_chunk . ')[\.\/])*(?:' . $name_chunk  . ')\.?';
-        $special_variable_name = '@[a-z]+';
-        $escaped_value = '(?:(?<!\\\\)".*?(?<!\\\\)"|(?<!\\\\)\'.*?(?<!\\\\)\')';
-        $argument_name = $name_chunk;
-        $argument_value = $variable_name . '|' . $escaped_value . '|' . $special_variable_name;
-        $positional_argument = '#^(' . $argument_value . ')#';
-        $named_argument = '#^(' . $argument_name . ')\s*=\s*(' . $argument_value . ')#';
+            $name_chunk = '(?:[^' . $bad_chars . '\s]+)|(?:\[[^' . $bad_seg_chars . ']+\])';
+            $variable_name = '(?:\.\.\/)*(?:(?:' . $name_chunk . ')[\.\/])*(?:' . $name_chunk  . ')\.?';
+            $special_variable_name = '@[a-z]+';
+            $escaped_value = '(?:(?<!\\\\)".*?(?<!\\\\)"|(?<!\\\\)\'.*?(?<!\\\\)\')';
+            $argument_name = $name_chunk;
+            $argument_value = $variable_name . '|' . $escaped_value . '|' . $special_variable_name;
+            $positional_argument = '#^(' . $argument_value . ')#';
+            $named_argument = '#^(' . $argument_name . ')\s*=\s*(' . $argument_value . ')#';
+        }
 
         $current_str = trim($args_string);
 
